@@ -2,10 +2,28 @@
 
 // initializing
 const express = require("express");
+var morgan = require("morgan");
 const app = express();
 
-// needed for post
+// parser here ( needed for post )
+// change the body to json
 app.use(express.json());
+
+// token to extract body from the post request
+morgan.token("request-body", (req, res) => {
+  if (req.method === "POST") {
+    return JSON.stringify(req.body); // Assuming the request body is JSON
+  } else {
+    return "";
+  }
+});
+
+// logger here morgan
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :request-body"
+  )
+);
 
 // DATA
 let data = [
