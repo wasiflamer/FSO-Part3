@@ -3,6 +3,7 @@
 // initializing
 const express = require("express");
 const app = express();
+
 // needed for post
 app.use(express.json());
 
@@ -85,8 +86,6 @@ const generateId = () => {
 app.post("/api/persons", (request, response) => {
   const body = request.body;
 
-  console.table(body);
-
   if (!body.name) {
     return response.status(400).json({
       error: "name missing",
@@ -96,6 +95,15 @@ app.post("/api/persons", (request, response) => {
   if (!body.number) {
     return response.status(400).json({
       error: "number missing",
+    });
+  }
+
+  let result = data.find((data) => data.name === body.name);
+
+  // name already exits
+  if (result) {
+    return response.status(400).json({
+      error: "name must be unique",
     });
   }
 
