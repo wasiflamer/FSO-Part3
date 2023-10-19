@@ -5,6 +5,12 @@ const express = require("express");
 var morgan = require("morgan");
 const app = express();
 
+const cors = require("cors");
+
+app.use(cors());
+
+app.use(express.static("dist"));
+
 // parser here ( needed for post )
 // change the body to json
 app.use(express.json());
@@ -18,7 +24,7 @@ morgan.token("request-body", (req, res) => {
   }
 });
 
-// logger here morgan
+// logger here morgan for the log details
 app.use(
   morgan(
     ":method :url :status :res[content-length] - :response-time ms :request-body"
@@ -50,7 +56,7 @@ let data = [
 ];
 
 // opening a port to listen to
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
@@ -103,6 +109,8 @@ const generateId = () => {
 // add entry route
 app.post("/api/persons", (request, response) => {
   const body = request.body;
+
+  console.log(request.body);
 
   if (!body.name) {
     return response.status(400).json({
