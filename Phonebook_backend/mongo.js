@@ -2,7 +2,6 @@
 
 // adding library functionality
 const mongoose = require("mongoose");
-
 // password
 const password = process.argv[2];
 // get name
@@ -37,8 +36,9 @@ const entry = new Entry({
 
 if (process.argv.length == 3) {
   Entry.find({}).then((result) => {
+    console.log(`phonebook:`);
     result.forEach((entry) => {
-      console.log(entry);
+      console.log(`${entry.name} ${entry.number}`);
     });
     mongoose.connection.close();
   });
