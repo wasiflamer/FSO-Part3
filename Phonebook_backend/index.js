@@ -1,21 +1,8 @@
-// mongodb setup
+// importing mondb stuff
+require("dotenv").config();
+const Entry = require("./models/entry");
 
-const mongoose = require("mongoose");
-
-// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
-const url = `mongodb+srv://fullstack:${password}@cluster0.o1opl.mongodb.net/?retryWrites=true&w=majority`;
-
-mongoose.set("strictQuery", false);
-mongoose.connect(url);
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
-});
-
-const Note = mongoose.model("Note", noteSchema);
-
-// FSO part 3 backened ...
+// FSO part 3 backened ..
 
 // initializing
 const express = require("express");
@@ -85,7 +72,9 @@ app.get("/", (request, response) => {
 
 //  ALL phonebook entries route
 app.get("/api/persons", (request, response) => {
-  response.json(data);
+  Entry.find({}).then((entries) => {
+    response.json(entries);
+  });
 });
 
 // info about phonebook entries route
