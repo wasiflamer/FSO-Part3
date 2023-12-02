@@ -7,13 +7,13 @@ const Entry = require("./models/entry");
 // initializing
 const express = require("express");
 var morgan = require("morgan");
+
 const app = express();
 
-const cors = require("cors");
-
-app.use(cors());
-
+// kinda importing the frontend build here
 app.use(express.static("build"));
+const cors = require("cors");
+app.use(cors());
 
 // parser here ( needed for post )
 // change the body to json
@@ -89,15 +89,9 @@ app.get("/info", (request, response) => {
 
 // single entry route
 app.get("/api/persons/:id", (request, response) => {
-  // get the parameter with request.params
-  const id = Number(request.params.id);
-  const note = data.find((note) => note.id === id);
-
-  if (note) {
-    response.json(note);
-  } else {
-    response.status(404).end();
-  }
+  Entry.findById(request.params.id).then((entry) => {
+    response.json(entry);
+  });
 });
 
 // delete entry route
@@ -116,36 +110,42 @@ const generateId = () => {
 app.post("/api/persons", (request, response) => {
   const body = request.body;
 
-  console.log(request.body);
-
-  if (!body.name) {
-    return response.status(400).json({
-      error: "name missing",
-    });
+  if (body.content === undefined) {
+    return response.status(400).json({ error: "content missing" });
   }
 
-  if (!body.number) {
-    return response.status(400).json({
-      error: "number missing",
-    });
-  }
+  // console.log(request.body);
 
-  let result = data.find((data) => data.name === body.name);
+  // if (!body.name) {
+  //   return response.status(400).json({
+  //     error: "name missing",
+  //   });
+  // }
 
-  // name already exits
-  if (result) {
-    return response.status(400).json({
-      error: "name must be unique",
-    });
-  }
+  // if (!body.number) {
+  //   return response.status(400).json({
+  //     error: "number missing",
+  //   });
+  // }
 
-  const person = {
-    id: generateId(),
+  // let result = data.find((data) => data.name === body.name);
+
+  // // name already exits
+  // if (result) {
+  //   return response.status(400).json({
+  //     error: "name must be unique",
+  //   });
+  // }
+
+  // console.log("it was here ! ");
+
+  const entry = new Entry({
     name: body.name,
     number: body.number,
-  };
+  });
 
-  data = data.concat(person);
-
-  response.json(data);
+  entry.save().then((savedentry) => {
+    data = data.concat(savedentry);
+    response.json(savedentry);
+  });
 });
