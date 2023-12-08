@@ -95,11 +95,20 @@ app.get("/api/persons/:id", (request, response) => {
 });
 
 // delete entry route
-app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  data = data.filter((data) => data.id !== id);
-  response.status(204).end();
+// app.delete("/api/persons/:id", (request, response) => {
+
+app.delete("/api/persons/:id", (request, response, next) => {
+  Entry.findByIdAndDelete(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
 });
+
+// const id = Number(request.params.id);
+// data = data.filter((data) => data.id !== id);
+// response.status(204).end();
+// });
 
 const generateId = () => {
   const maxId = data.length > 0 ? Math.max(...data.map((n) => n.id)) : 0;
