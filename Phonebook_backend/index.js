@@ -10,25 +10,13 @@ var morgan = require("morgan");
 
 const app = express();
 
+// parser here ( needed for post )
+// change the body to json
+app.use(express.json());
 // kinda importing the frontend build here
 app.use(express.static("build"));
 const cors = require("cors");
 app.use(cors());
-
-// parser here ( needed for post )
-// change the body to json
-app.use(express.json());
-
-// defining error handler
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message);
-
-  if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
-  }
-
-  next(error);
-};
 
 // token to extract body from the post request
 morgan.token("request-body", (req, res) => {
@@ -45,6 +33,17 @@ app.use(
     ":method :url :status :res[content-length] - :response-time ms :request-body"
   )
 );
+
+// defining error handler
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
 
 // this has to be the last loaded middleware.
 app.use(errorHandler);
