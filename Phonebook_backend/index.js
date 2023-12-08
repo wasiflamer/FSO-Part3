@@ -173,3 +173,18 @@ app.post("/api/persons", (request, response) => {
     response.json(savedentry);
   });
 });
+
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+
+  const entry = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Entry.findByIdAndUpdate(request.params.id, entry, { new: true })
+    .then((updatedentry) => {
+      response.json(updatedentry);
+    })
+    .catch((error) => next(error));
+});
