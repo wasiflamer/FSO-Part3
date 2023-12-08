@@ -19,6 +19,17 @@ app.use(cors());
 // change the body to json
 app.use(express.json());
 
+// defining error handler
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
 // token to extract body from the post request
 morgan.token("request-body", (req, res) => {
   if (req.method === "POST") {
@@ -34,6 +45,9 @@ app.use(
     ":method :url :status :res[content-length] - :response-time ms :request-body"
   )
 );
+
+// this has to be the last loaded middleware.
+app.use(errorHandler);
 
 // DATA
 let data = [
@@ -88,10 +102,16 @@ app.get("/info", (request, response) => {
 });
 
 // single entry route
-app.get("/api/persons/:id", (request, response) => {
-  Entry.findById(request.params.id).then((entry) => {
-    response.json(entry);
-  });
+app.get("/api/persons/:id", (request, response, next) => {
+  Entry.findById(request.params.id)
+    .then((entry) => {
+      if (entry) {
+        response.json(entry);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 // delete entry route
