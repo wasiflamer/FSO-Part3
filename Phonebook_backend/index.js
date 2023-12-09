@@ -95,9 +95,11 @@ app.get("/info", (request, response) => {
   // calculate time here
   const currentTime = new Date();
 
-  response.send(`<P>Phonebook has info for ${data.length} people</P>
-  <p>${currentTime}</p>
+  Entry.find({}).then((entries) => {
+    response.send(`<P>Phonebook has info for ${entries.length} people</P>
+    <p>${currentTime}</p>
   `);
+  });
 });
 
 // single entry route
