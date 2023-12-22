@@ -9,10 +9,9 @@ const url = process.env.MONGODB_URI;
 // mongodb atlas uri
 // const url = `mongodb+srv://zenlooper1:${password}@cluster0.1sev2ah.mongodb.net/PhonebookApp?retryWrites=true&w=majority`;
 
-// Define a function to validate the number field
 function validateNumber(number) {
-  // Regular expression to match the desired format: XX-XXXXXX (X represents numbers)
-  const regex = /^\d{2,3}-\d{6,}$/;
+  // Regular expression to match the desired formats: XX-XXXXXX or XXX-XXXXXX (X represents numbers)
+  const regex = /^\d{2,3}-\d{6,}$|^\d{3}-\d{6,}$/;
 
   // Check if the number matches the regex pattern and has a length of 8 or more
   return regex.test(number) && number.length >= 8;
@@ -41,7 +40,8 @@ const entrySchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: validateNumber,
-      message: "Please enter a valid number in the format XX-XXXXXX",
+      message:
+        "Please enter a valid number in the format XX-XXXXXX or xxx-xxxxxx",
     },
   },
 });

@@ -137,7 +137,7 @@ const generateId = () => {
 };
 
 // add entry route
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
   // console.log(request.body);
@@ -170,12 +170,16 @@ app.post("/api/persons", (request, response) => {
     number: body.number,
   });
 
-  entry.save().then((savedentry) => {
-    data = data.concat(savedentry);
-    response.json(savedentry);
-  });
+  entry
+    .save()
+    .then((savedentry) => {
+      data = data.concat(savedentry);
+      response.json(savedentry);
+    })
+    .catch((error) => next(error));
 });
 
+// update route
 app.put("/api/persons/:id", (request, response, next) => {
   const body = request.body;
 
